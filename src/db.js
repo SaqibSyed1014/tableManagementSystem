@@ -76,7 +76,7 @@ export const deletingItem = (payload) => {
     return deleteDoc(docRef).then(() => fetchingItems())
 }
 
-
+// Table CRUD
 export const fetchingTables = () => {
     const response = []
     return getDocs(tableColRef)
@@ -93,7 +93,12 @@ export const addingTable = (payload) => {
     })
 }
 
-export const deleteContact = (payload) => {
-    const docRef = doc(db, "contacts", payload.id)
-    return deleteDoc(docRef)
+export const updatingTable = (payload) => {
+    const docRef = doc(db, "tables", payload.id)
+    return updateDoc(docRef, payload).then(() => fetchingTables())
+}
+
+export const deletingTable = (payload) => {
+    const docRef = doc(db, "tables", payload.id)
+    return deleteDoc(docRef).then(() => fetchingTables())
 }

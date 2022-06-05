@@ -23,6 +23,7 @@
         :items="tables"
         :loading="tableLoading"
         :search="search"
+        @click:row="openTableDialog"
         hide-default-footer
         class="elevation-1"
     ></v-data-table>
@@ -39,7 +40,7 @@
           <v-card-text>
             <v-text-field
                 label="Enter Table Number"
-                v-model="tableNo"
+                v-model="tableData.tableNo"
             ></v-text-field>
           </v-card-text>
         </v-form>
@@ -48,11 +49,13 @@
           <v-spacer></v-spacer>
 
           <v-btn
-              color="dark darken-1"
               text
-              @click="dialog = false"
+              :loading="deleteLoader"
+              :disabled="deleteLoader"
+              :color="tableData.id ? 'red' : 'black'"
+              @click="tableData.id ? deleteTable() : dialog = false"
           >
-            Close
+            {{ `${ tableData.id ? 'Delete' : 'Close' }` }}
           </v-btn>
 
           <v-btn
@@ -60,14 +63,9 @@
               text
               :loading="loading"
               :disabled="loading"
-              @click="saveTable"
+              @click="tableData.id ? updateTable() : saveTable()"
           >
-            Save
-            <template v-slot:loader>
-              <span class="custom-loader">
-                <v-icon light>mdi-cached</v-icon>
-              </span>
-            </template>
+            {{ `${ tableData.id ? 'Update' : 'Save' }` }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -76,34 +74,52 @@
 </template>
 
 <script>
-import { fetchingTables, addingTable } from "../db";
+import { fetchingTables, addingTable, updatingTable, deletingTable } from "../db";
 
 export default {
   name: "ViewTables",
   data: () => ({
     search: '',
-    tableNo: '',
+    tableData: {},
+    tables: [],
     tableHeader: [
       { text: 'Table No', value: 'tableNo', align: 'center' },
     ],
-    tables: [],
     dialog: false,
-    loader: null,
     loading: false,
+    deleteLoader: false,
     tableLoading: false,
   }),
+  watch: {
+    dialog(val) { if (!val) this.tableData = {} },
+  },
   async created() {
     this.tableLoading = true
     this.tables = await fetchingTables()
-    console.log('tables ', this.tables)
     this.tableLoading = false
   },
   methods: {
     async saveTable() {
-      this.loader = 'loading'
-      this.tables = await addingTable({ tableNo: this.tableNo })
-      this.loader = null
+      this.loading = true
+      this.tables = await addingTable(this.tableData)
+      this.loading = false
       this.dialog = false
+    },
+    async updateTable() {
+      this.loading = true
+      this.tables = await updatingTable(this.tableData)
+      this.loading = false
+      this.dialog = false
+    },
+    async deleteTable() {
+      this.deleteLoader = true
+      this.tableData = await deletingTable(this.tableData)
+      this.deleteLoader = false
+      this.dialog = false
+    },
+    openTableDialog(table) {
+      this.dialog = true
+      this.tableData = table
     },
   },
 }
