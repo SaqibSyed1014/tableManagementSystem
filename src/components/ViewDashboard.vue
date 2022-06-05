@@ -1,37 +1,32 @@
 <template>
   <v-row>
-    <v-col cols="4">
+    <v-col cols="4" v-for="(data, index) in dashboardData" :key="index">
       <v-card>
-        <v-card-title>Total Categories</v-card-title>
-        <v-card-text><h4>{{ totalCategories }}</h4></v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="4">
-      <v-card>
-        <v-card-title>Total Orders</v-card-title>
-        <v-card-text><h4>0</h4></v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="4">
-      <v-card>
-        <v-card-title>Total Orders</v-card-title>
-        <v-card-text><h4>0</h4></v-card-text>
+        <v-card-title>{{ data.title }}</v-card-title>
+        <v-card-text><h1 class="text-center pb-5">{{ data.total }}</h1></v-card-text>
       </v-card>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import { fetchingCategories } from '../db'
+import { fetchingCategories, fetchingItems, fetchingTables } from '../db'
 export default {
   name: "ViewDashboard",
   data() {
     return {
-      totalCategories: 0,
+      dashboardData: [
+        { title: 'Total Categories', total: 0 },
+        { title: 'Total Items', total: 0 },
+        { title: 'Total Tables', total: 0 },
+        { title: 'Total Orders', total: 0 },
+      ],
     }
   },
   async created() {
-    this.totalCategories = (await fetchingCategories()).length
+    this.dashboardData[0].total = (await fetchingCategories()).length
+    this.dashboardData[1].total = (await fetchingItems()).length
+    this.dashboardData[2].total = (await fetchingTables()).length
   },
 }
 </script>

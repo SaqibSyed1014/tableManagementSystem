@@ -14,38 +14,97 @@
                 class="pt-0 mt-0"
             ></v-text-field>
           </v-col>
-          <v-btn color="primary">Add Table</v-btn>
+          <v-btn color="primary" @click.stop="dialog = true">Add Table</v-btn>
         </v-row>
       </v-col>
     </v-row>
     <v-data-table
         :headers="tableHeader"
-        :items="tableData"
-        hide-default-footer
+        :items="tables"
+        :loading="tableLoading"
         :search="search"
+        hide-default-footer
         class="elevation-1"
     ></v-data-table>
+
+    <v-dialog
+        v-model="dialog"
+        max-width="290"
+    >
+      <v-card>
+        <v-form>
+          <v-card-title>
+            <span>Add a Table</span>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+                label="Enter Table Number"
+                v-model="tableNo"
+            ></v-text-field>
+          </v-card-text>
+        </v-form>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+              color="dark darken-1"
+              text
+              @click="dialog = false"
+          >
+            Close
+          </v-btn>
+
+          <v-btn
+              color="primary darken-1"
+              text
+              :loading="loading"
+              :disabled="loading"
+              @click="saveTable"
+          >
+            Save
+            <template v-slot:loader>
+              <span class="custom-loader">
+                <v-icon light>mdi-cached</v-icon>
+              </span>
+            </template>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
+import { fetchingTables, addingTable } from "../db";
+
 export default {
   name: "ViewTables",
   data: () => ({
     search: '',
+    tableNo: '',
     tableHeader: [
       { text: 'Table No', value: 'tableNo', align: 'center' },
-      { text: 'Assigned Orders', value: 'orders', align: 'center' }
     ],
-    tableData: [
-      { tableNo: 1, orders: 4 },
-      { tableNo: 2, orders: 1 },
-      { tableNo: 3, orders: 0 },
-    ],
+    tables: [],
+    dialog: false,
+    loader: null,
+    loading: false,
+    tableLoading: false,
   }),
+  async created() {
+    this.tableLoading = true
+    this.tables = await fetchingTables()
+    console.log('tables ', this.tables)
+    this.tableLoading = false
+  },
+  methods: {
+    async saveTable() {
+      this.loader = 'loading'
+      this.tables = await addingTable({ tableNo: this.tableNo })
+      this.loader = null
+      this.dialog = false
+    },
+  },
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -22,8 +22,8 @@
         :headers="tableHeader"
         :items="allCategories"
         :loading="tableLoading"
-        hide-default-footer
         :search="search"
+        hide-default-footer
         class="elevation-1"
     ></v-data-table>
 
@@ -82,15 +82,15 @@ export default {
   name: "ViewCategories",
   data: () => ({
     search: '',
-    dialog: false,
-    loader: null,
-    loading: false,
-    tableLoading: false,
     categoryName: '',
     allCategories: [],
     tableHeader: [
       { text: 'Category Name', value: 'categoryName', align: 'center' },
     ],
+    dialog: false,
+    loader: null,
+    loading: false,
+    tableLoading: false,
   }),
   async created() {
     this.tableLoading = true
@@ -100,8 +100,9 @@ export default {
   methods: {
     async saveCategory() {
       this.loader = 'loading'
-      await addingCategory({ 'categoryName': this.categoryName })
+      this.allCategories = await addingCategory({ 'categoryName': this.categoryName })
       this.loader = null
+      this.dialog = false
     },
   },
 }

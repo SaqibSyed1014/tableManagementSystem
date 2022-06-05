@@ -16,12 +16,10 @@ const app = initializeApp(config);
 
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
-const itemsColRef = collection(db, "items")
 const categoriesColRef = collection(db, "categories")
+const itemsColRef = collection(db, "items")
+const tableColRef = collection(db, "tables")
 
-export const getItems = () => {
-    return getDocs(itemsColRef)
-}
 
 export const fetchingCategories = () => {
     const response = []
@@ -35,7 +33,48 @@ export const fetchingCategories = () => {
 }
 
 export const addingCategory = (payload) => {
-    addDoc(categoriesColRef, payload).then(() => fetchingCategories())
+    return addDoc(categoriesColRef, payload).then((docRef) => {
+        return updateDoc(doc(db, "categories", docRef.id), { id: docRef.id, ...payload }).then(() => fetchingCategories())
+     })
+}
+
+export const updateCategory = (payload) => {
+    console.log('ip ', payload)
+    const docRef = doc(db, "categories", payload.id)
+    return updateDoc(docRef, payload).then(() => fetchingCategories())
+}
+
+export const fetchingItems = () => {
+    const response = []
+    return getDocs(itemsColRef)
+        .then((snapshot) => {
+            snapshot.docs.forEach((doc) => {
+                response.push({ id: doc.id, ...doc.data()  })
+            })
+            return response
+        })
+}
+
+export const addingItems = (payload) => {
+    return addDoc(itemsColRef, payload).then((docRef) => {
+        return updateDoc(doc(db, "items", docRef.id), { id: docRef.id, ...payload }).then(() => fetchingItems())
+    })
+}
+
+export const fetchingTables = () => {
+    const response = []
+    return getDocs(tableColRef)
+        .then((snapshot) => {
+            snapshot.docs.forEach((doc) => {
+                response.push({ id: doc.id, ...doc.data()  })
+            })
+            return response
+        })}
+
+export const addingTable = (payload) => {
+    return addDoc(tableColRef, payload).then((docRef) => {
+        return updateDoc(doc(db, "tables", docRef.id), { id: docRef.id, ...payload }).then(() => fetchingItems())
+    })
 }
 
 // export const addContact = (payload) => {
