@@ -48,6 +48,7 @@ export const deletingCategory = (payload) => {
     return deleteDoc(docRef).then(() => fetchingCategories())
 }
 
+// Items CRUD
 export const fetchingItems = () => {
     const response = []
     return getDocs(itemsColRef)
@@ -64,6 +65,17 @@ export const addingItems = (payload) => {
         return updateDoc(doc(db, "items", docRef.id), { id: docRef.id, ...payload }).then(() => fetchingItems())
     })
 }
+
+export const updatingItem = (payload) => {
+    const docRef = doc(db, "items", payload.id)
+    return updateDoc(docRef, payload).then(() => fetchingItems())
+}
+
+export const deletingItem = (payload) => {
+    const docRef = doc(db, "items", payload.id)
+    return deleteDoc(docRef).then(() => fetchingItems())
+}
+
 
 export const fetchingTables = () => {
     const response = []

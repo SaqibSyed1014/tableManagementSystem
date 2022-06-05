@@ -23,6 +23,7 @@
         :items="items"
         :loading="tableLoading"
         :search="search"
+        @click:row="openItemDialog"
         hide-default-footer
         class="elevation-1"
     ></v-data-table>
@@ -34,15 +35,15 @@
       <v-card>
         <v-form>
           <v-card-title>
-            <span>Add an Item</span>
+            <span>{{ `${ itemData.id ? 'Update' : 'Add an'}` }} Item</span>
           </v-card-title>
           <v-card-text>
             <v-text-field
                 label="Enter Item Name"
-                v-model="itemName"
+                v-model="itemData.itemName"
             ></v-text-field>
             <v-select
-                v-model="selectedCategory"
+                v-model="itemData.selectedCategory"
                 :items="categories"
                 item-text="categoryName"
                 return-object
@@ -50,7 +51,7 @@
             ></v-select>
             <v-text-field
                 label="Enter Item Price"
-                v-model="itemPrice"
+                v-model="itemData.itemPrice"
             ></v-text-field>
           </v-card-text>
         </v-form>
@@ -59,11 +60,13 @@
           <v-spacer></v-spacer>
 
           <v-btn
-              color="dark darken-1"
               text
-              @click="dialog = false"
+              :loading="deleteLoader"
+              :disabled="deleteLoader"
+              :color="itemData.id ? 'red' : 'black'"
+              @click="itemData.id ? deleteItem() : dialog = false"
           >
-            Close
+            {{ `${ itemData.id ? 'Delete' : 'Close' }` }}
           </v-btn>
 
           <v-btn
@@ -71,14 +74,9 @@
               text
               :loading="loading"
               :disabled="loading"
-              @click="saveItem"
+              @click="itemData.id ? updateItem() : saveItem()"
           >
-            Save
-            <template v-slot:loader>
-              <span class="custom-loader">
-                <v-icon light>mdi-cached</v-icon>
-              </span>
-            </template>
+            {{ `${ itemData.id ? 'Update' : 'Save' }` }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -87,7 +85,7 @@
 </template>
 
 <script>
-import { fetchingCategories, fetchingItems, addingItems } from "../db";
+import { fetchingCategories, fetchingItems, addingItems, updatingItem, deletingItem } from "../db";
 
 export default {
   name: "ViewItems",
@@ -95,19 +93,24 @@ export default {
     search: '',
     tableHeader: [
       { text: 'Item Name', value: 'itemName', align: 'center' },
-      { text: 'Category', value: 'assignedCategory.categoryName', align: 'center' },
-      { text: 'Price', value: 'price', align: 'center' }
+      { text: 'Category', value: 'selectedCategory.categoryName', align: 'center' },
+      { text: 'Price', value: 'itemPrice', align: 'center' }
     ],
+    itemData: {
+      itemName: '',
+      itemPrice: '',
+      selectedCategory: {},
+    },
     items: [],
     categories: [],
-    itemName: '',
-    itemPrice: '',
-    selectedCategory: {},
     dialog: false,
-    loader: null,
     loading: false,
+    deleteLoader: false,
     tableLoading: false,
   }),
+  watch: {
+    dialog(val) { if (!val) this.itemData = {} },
+  },
   async created() {
     this.tableLoading = true
     this.categories = await fetchingCategories()
@@ -116,11 +119,26 @@ export default {
   },
   methods: {
     async saveItem() {
-      this.loader = 'loading'
-      this.items = await addingItems({ itemName: this.itemName, price: this.itemPrice, assignedCategory: this.selectedCategory })
-      console.log('saved ', this.items)
-      this.loader = null
+      this.loading = true
+      this.items = await addingItems(this.itemData)
+      this.loading = false
       this.dialog = false
+    },
+    async updateItem() {
+      this.loading = true
+      this.items = await updatingItem(this.itemData)
+      this.loading = false
+      this.dialog = false
+    },
+    async deleteItem() {
+      this.deleteLoader = true
+      this.items = await deletingItem(this.itemData)
+      this.deleteLoader = false
+      this.dialog = false
+    },
+    openItemDialog(item) {
+      this.dialog = true
+      this.itemData = item
     },
   },
 }
