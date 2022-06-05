@@ -23,6 +23,7 @@
         :items="allCategories"
         :loading="tableLoading"
         :search="search"
+        @click:row="openCategoryDialogue"
         hide-default-footer
         class="elevation-1"
     ></v-data-table>
@@ -34,12 +35,12 @@
       <v-card>
         <v-form>
           <v-card-title>
-            <span>Add a Category</span>
+            <span>{{ `${categoryData.id ? 'Update' : 'Add a'}` }} Category</span>
           </v-card-title>
           <v-card-text>
             <v-text-field
                 label="Enter Category Name"
-                v-model="categoryName"
+                v-model="categoryData.categoryName"
             ></v-text-field>
           </v-card-text>
         </v-form>
@@ -48,11 +49,13 @@
           <v-spacer></v-spacer>
 
           <v-btn
-              color="dark darken-1"
+              :color="categoryData.id ? 'red' : 'black'"
               text
-              @click="dialog = false"
+              :loading="deleteLoader"
+              :disabled="deleteLoader"
+              @click="categoryData.id ? deleteCategory() : dialog = false"
           >
-            Close
+            {{ `${ categoryData.id ? 'Delete' : 'Close' }` }}
           </v-btn>
 
           <v-btn
@@ -60,14 +63,9 @@
               text
               :loading="loading"
               :disabled="loading"
-              @click="saveCategory"
+              @click="categoryData.id ? updateCategory() : saveCategory()"
           >
-            Save
-            <template v-slot:loader>
-              <span class="custom-loader">
-                <v-icon light>mdi-cached</v-icon>
-              </span>
-            </template>
+            {{ `${ categoryData.id ? 'Update' : 'Save' }` }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -76,22 +74,25 @@
 </template>
 
 <script>
-import { addingCategory, fetchingCategories } from '../db'
+import { addingCategory, fetchingCategories, updatingCategory, deletingCategory } from '../db'
 
 export default {
   name: "ViewCategories",
   data: () => ({
     search: '',
-    categoryName: '',
+    categoryData: {},
     allCategories: [],
     tableHeader: [
       { text: 'Category Name', value: 'categoryName', align: 'center' },
     ],
     dialog: false,
-    loader: null,
     loading: false,
+    deleteLoader: false,
     tableLoading: false,
   }),
+  watch: {
+    dialog(val) { if (!val) this.categoryData = {} },
+  },
   async created() {
     this.tableLoading = true
     this.allCategories = await fetchingCategories()
@@ -99,26 +100,27 @@ export default {
   },
   methods: {
     async saveCategory() {
-      this.loader = 'loading'
-      this.allCategories = await addingCategory({ 'categoryName': this.categoryName })
-      this.loader = null
+      this.loading = true
+      this.allCategories = await addingCategory(this.categoryData)
+      this.loading = false
       this.dialog = false
+    },
+    async updateCategory() {
+      this.loading = true
+      this.allCategories = await updatingCategory(this.categoryData)
+      this.loading = false
+      this.dialog = false
+    },
+    async deleteCategory() {
+      this.deleteLoader = true
+      this.allCategories = await deletingCategory(this.categoryData)
+      this.deleteLoader = false
+      this.dialog = false
+    },
+    openCategoryDialogue(category) {
+      this.dialog = true
+      this.categoryData = category
     },
   },
 }
 </script>
-
-<style scoped>
-.custom-loader {
-  animation: loader 1s infinite;
-  display: flex;
-}
-@keyframes loader {
-  from {
-    transform: rotate(0);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>

@@ -20,7 +20,7 @@ const categoriesColRef = collection(db, "categories")
 const itemsColRef = collection(db, "items")
 const tableColRef = collection(db, "tables")
 
-
+// Categories CRUD
 export const fetchingCategories = () => {
     const response = []
     return getDocs(categoriesColRef)
@@ -38,10 +38,14 @@ export const addingCategory = (payload) => {
      })
 }
 
-export const updateCategory = (payload) => {
-    console.log('ip ', payload)
+export const updatingCategory = (payload) => {
     const docRef = doc(db, "categories", payload.id)
     return updateDoc(docRef, payload).then(() => fetchingCategories())
+}
+
+export const deletingCategory = (payload) => {
+    const docRef = doc(db, "categories", payload.id)
+    return deleteDoc(docRef).then(() => fetchingCategories())
 }
 
 export const fetchingItems = () => {
@@ -75,15 +79,6 @@ export const addingTable = (payload) => {
     return addDoc(tableColRef, payload).then((docRef) => {
         return updateDoc(doc(db, "tables", docRef.id), { id: docRef.id, ...payload }).then(() => fetchingItems())
     })
-}
-
-// export const addContact = (payload) => {
-//     return addDoc(colRef, payload)
-// }
-
-export const updateContact = (payload) => {
-    const docRef = doc(db, "contacts", payload.id)
-    return updateDoc(docRef, payload)
 }
 
 export const deleteContact = (payload) => {
