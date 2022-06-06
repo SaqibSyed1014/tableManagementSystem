@@ -1,3 +1,3 @@
 # Table Order System
 
-(https://table-management-system-by-saqib-syed.netlify.app/)
+Live: https://table-order-system-by-saqib-syed.netlify.app/
