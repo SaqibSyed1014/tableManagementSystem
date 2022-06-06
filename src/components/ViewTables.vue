@@ -35,7 +35,7 @@
       <v-card>
         <v-form>
           <v-card-title>
-            <span>Add a Table</span>
+            <span>{{ `${ tableData.id ? 'Update' : 'Add a' }` }} Table No</span>
           </v-card-title>
           <v-card-text>
             <v-text-field
@@ -113,7 +113,7 @@ export default {
     },
     async deleteTable() {
       this.deleteLoader = true
-      this.tableData = await deletingTable(this.tableData)
+      this.tables = await deletingTable(this.tableData)
       this.deleteLoader = false
       this.dialog = false
     },

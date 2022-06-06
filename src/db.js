@@ -89,7 +89,7 @@ export const fetchingTables = () => {
 
 export const addingTable = (payload) => {
     return addDoc(tableColRef, payload).then((docRef) => {
-        return updateDoc(doc(db, "tables", docRef.id), { id: docRef.id, ...payload }).then(() => fetchingItems())
+        return updateDoc(doc(db, "tables", docRef.id), { id: docRef.id, ...payload }).then(() => fetchingTables())
     })
 }
 
