@@ -98,7 +98,7 @@
                 return-object
                 label="Assign To Table No"
             ></v-select>
-            <div class="bill-wrapper text-center"><h3>Total Bill</h3><h2><span class="bill-highlight">{{ orderData.totalBill }}</span></h2></div>
+            <div class="bill-wrapper text-center"><h3>Total Bill</h3><h2><span class="bill-highlight">{{ `$${orderData.totalBill}` }}</span></h2></div>
           </v-card-text>
         </v-form>
 
@@ -192,7 +192,7 @@ export default {
   },
   methods: {
     filterItems(category) {
-      if (this.orderData.id) this.orderData.selectedItems = []
+      this.orderData.selectedItems = []
       this.selectedCategoryItem = this.items.filter((item) => item.selectedCategory.id === category.id)
       this.orderData.totalBill = 0
     },

@@ -15,7 +15,7 @@
           </ul>
           <div>Items Selected From <b>{{ orderDetails.selectedCategory.categoryName }}</b> Category</div>
           <div>Ordered To Table No <b>{{ orderDetails.selectedTable.tableNo }}</b></div>
-          <div class="bill-wrapper text-center"><h3>Bill</h3><h2><span class="bill-highlight">{{ orderDetails.totalBill }}</span></h2></div>
+          <div class="bill-wrapper text-center"><h3>Bill</h3><h2><span class="bill-highlight">{{ `$${orderDetails.totalBill}` }}</span></h2></div>
         </v-card-text>
       </v-form>
 
