@@ -19,6 +19,7 @@ const db = getFirestore(app);
 const categoriesColRef = collection(db, "categories")
 const itemsColRef = collection(db, "items")
 const tableColRef = collection(db, "tables")
+const orderColRef = collection(db, "orders")
 
 // Categories CRUD
 export const fetchingCategories = () => {
@@ -26,7 +27,7 @@ export const fetchingCategories = () => {
     return getDocs(categoriesColRef)
         .then((snapshot) => {
             snapshot.docs.forEach((doc) => {
-                response.push({ id: doc.id, ...doc.data()  })
+                response.push({ id: doc.id, ...doc.data() })
             })
             return response
         })
@@ -54,7 +55,7 @@ export const fetchingItems = () => {
     return getDocs(itemsColRef)
         .then((snapshot) => {
             snapshot.docs.forEach((doc) => {
-                response.push({ id: doc.id, ...doc.data()  })
+                response.push({ id: doc.id, ...doc.data() })
             })
             return response
         })
@@ -82,7 +83,7 @@ export const fetchingTables = () => {
     return getDocs(tableColRef)
         .then((snapshot) => {
             snapshot.docs.forEach((doc) => {
-                response.push({ id: doc.id, ...doc.data()  })
+                response.push({ id: doc.id, ...doc.data() })
             })
             return response
         })}
@@ -101,4 +102,33 @@ export const updatingTable = (payload) => {
 export const deletingTable = (payload) => {
     const docRef = doc(db, "tables", payload.id)
     return deleteDoc(docRef).then(() => fetchingTables())
+}
+
+// Orders CRUD
+export const fetchingOrders = () => {
+    const response = []
+    return getDocs(orderColRef)
+        .then((snapshot) => {
+            snapshot.docs.forEach((doc) => {
+                response.push({ id: doc.id, statusLoader: false, ...doc.data() })
+            })
+            return response
+        })}
+
+export const addingOrder = (payload) => {
+    return addDoc(orderColRef, payload).then((docRef) => {
+        return updateDoc(doc(db, "orders", docRef.id), { id: docRef.id, ...payload }).then(() => fetchingOrders())
+    })
+}
+
+export const updatingOrder = (object) => {
+    const payload = JSON.parse(JSON.stringify(object))
+    delete payload.statusLoader
+    const docRef = doc(db, "orders", payload.id)
+    return updateDoc(docRef, payload).then(() => fetchingOrders())
+}
+
+export const deletingOrder = (payload) => {
+    const docRef = doc(db, "orders", payload.id)
+    return deleteDoc(docRef).then(() => fetchingOrders())
 }

@@ -20,3 +20,9 @@ export default {
   methods: {},
 };
 </script>
+
+<style lang="scss">
+.row-pointer > .v-data-table__wrapper > table > tbody > tr:hover {
+  cursor: pointer;
+}
+</style>
