@@ -3,7 +3,7 @@
     <v-row class="mb-2 px-5">
       <v-col cols="12" md="3" class="my-auto">Items Table</v-col>
       <v-col cols="12" md="9">
-        <v-row no-gutters style="grid-gap: 10px; align-items: center;">
+        <v-row no-gutters style="grid-gap: 10px; align-items: center; justify-content: end;">
           <v-col cols="12" md="5" class="ml-auto">
             <v-text-field
                 v-model="search"
@@ -24,9 +24,14 @@
         :loading="tableLoading"
         :search="search"
         @click:row="openItemDialog"
+        mobile-breakpoint="0"
         hide-default-footer
-        class="elevation-1"
-    ></v-data-table>
+        class="row-pointer elevation-1"
+    >
+      <template v-slot:item.itemPrice="{ item }">
+        <span>{{ `$${item.itemPrice}` }}</span>
+      </template>
+    </v-data-table>
 
     <v-dialog
         v-model="dialog"
@@ -52,6 +57,7 @@
             <v-text-field
                 label="Enter Item Price"
                 v-model="itemData.itemPrice"
+                prepend-inner-icon="mdi-currency-usd"
             ></v-text-field>
           </v-card-text>
         </v-form>
@@ -92,9 +98,9 @@ export default {
   data: () => ({
     search: '',
     tableHeader: [
-      { text: 'Item Name', value: 'itemName', align: 'center' },
-      { text: 'Category', value: 'selectedCategory.categoryName', align: 'center' },
-      { text: 'Price', value: 'itemPrice', align: 'center' }
+      { text: 'Item Name', value: 'itemName', align: 'center', sortable: false },
+      { text: 'Category', value: 'selectedCategory.categoryName', align: 'center', sortable: false },
+      { text: 'Price', value: 'itemPrice', align: 'center', sortable: false }
     ],
     itemData: {
       itemName: '',

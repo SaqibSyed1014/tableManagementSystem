@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="4" v-for="(data, index) in dashboardData" :key="index">
+      <v-col cols="12" sm="6" lg="4" v-for="(data, index) in dashboardData" :key="index">
         <v-card>
           <v-card-title>{{ data.title }}</v-card-title>
           <v-card-text><h1 class="text-center pb-5">{{ data.total.length }}</h1></v-card-text>
@@ -12,8 +12,9 @@
         :headers="tableHeader"
         :items="ordersPerCategory"
         :loading="tableLoading"
+        mobile-breakpoint="0"
         hide-default-footer
-        class="elevation-1"
+        class="elevation-1 mt-5"
     />
   </div>
 </template>
@@ -31,8 +32,8 @@ export default {
         { title: 'Total Orders', total: [] },
       ],
       tableHeader: [
-        { text: 'Category', value: 'category', align: 'center' },
-        { text: 'Total Orders', value: 'totalOrder', align: 'center' },
+        { text: 'Category', value: 'category', align: 'center', sortable: false },
+        { text: 'Total Orders', value: 'totalOrder', align: 'center', sortable: false },
       ],
       tableLoading: false,
     }

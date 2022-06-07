@@ -3,7 +3,7 @@
     <v-row class="mb-2 px-5">
       <v-col cols="12" md="3" class="my-auto">Tables</v-col>
       <v-col cols="12" md="9">
-        <v-row no-gutters style="grid-gap: 10px; align-items: center;">
+        <v-row no-gutters style="grid-gap: 10px; align-items: center; justify-content: end;">
           <v-col cols="12" md="5" class="ml-auto">
             <v-text-field
                 v-model="search"
@@ -24,8 +24,9 @@
         :loading="tableLoading"
         :search="search"
         @click:row="openTableDialog"
+        mobile-breakpoint="0"
         hide-default-footer
-        class="elevation-1"
+        class="row-pointer elevation-1"
     ></v-data-table>
 
     <v-dialog
@@ -83,7 +84,7 @@ export default {
     tableData: {},
     tables: [],
     tableHeader: [
-      { text: 'Table No', value: 'tableNo', align: 'center' },
+      { text: 'Table No', value: 'tableNo', align: 'center', sortable: false },
     ],
     dialog: false,
     loading: false,

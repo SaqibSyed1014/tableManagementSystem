@@ -3,7 +3,7 @@
     <v-row class="mb-2 px-5">
       <v-col cols="12" md="3" class="my-auto">Orders</v-col>
       <v-col cols="12" md="9">
-        <v-row no-gutters style="grid-gap: 10px; align-items: center;">
+        <v-row no-gutters style="grid-gap: 10px; align-items: center; justify-content: end;">
           <v-col cols="12" md="5" class="ml-auto">
             <v-text-field
                 v-model="search"
@@ -24,11 +24,15 @@
         :loading="tableLoading"
         :search="search"
         @click:row="openOrderDialog"
+        mobile-breakpoint="0"
         hide-default-footer
         class="row-pointer elevation-1"
     >
       <template v-slot:item.selectedItems="{ item }">
         <div v-for="value in item.selectedItems" :key="value.id">{{ value.itemName }}</div>
+      </template>
+      <template v-slot:item.totalBill="{ item }">
+        <span>{{ `$${item.totalBill}` }}</span>
       </template>
       <template v-slot:item.paid="{ item }">
         <v-chip
@@ -50,12 +54,22 @@
 
     <v-dialog
         v-model="dialog"
-        max-width="290"
+        max-width="400"
     >
       <v-card>
         <v-form>
           <v-card-title>
-            <span>{{ `${ orderData.id ? 'Update' : 'Create' }` }} Order</span>
+            <v-row>
+              <v-col cols="8">{{ `${orderData.id ? 'Update' : 'Create'}` }} Order</v-col>
+              <v-col cols="4" class="text-right">
+                <v-chip
+                    dark
+                    x-small
+                    :color="orderData.paid ? 'green' : 'red'"
+                >{{ orderData.paid ? 'Paid' : 'Pending' }}
+                </v-chip>
+              </v-col>
+            </v-row>
           </v-card-title>
           <v-card-text>
             <v-select
@@ -114,7 +128,7 @@
       </v-card>
     </v-dialog>
 
-    <order-invoice ref="invoice" :order-details="orderData"/>
+    <order-invoice ref="invoice" :order-details="orderData" />
   </v-card>
 </template>
 
@@ -148,11 +162,11 @@ export default {
       paid: false,
     },
     tableHeader: [
-      { text: 'Table No', value: 'selectedTable.tableNo', align: 'center' },
-      { text: 'Items', value: 'selectedItems', align: 'center' },
-      { text: 'Category', value: 'selectedCategory.categoryName', align: 'center' },
-      { text: 'Total Bill', value: 'totalBill', align: 'center' },
-      { text: 'Status', value: 'paid', align: 'center' },
+      { text: 'Table No', value: 'selectedTable.tableNo', align: 'center', sortable: false },
+      { text: 'Items', value: 'selectedItems', align: 'center', sortable: false },
+      { text: 'Category', value: 'selectedCategory.categoryName', align: 'center', sortable: false },
+      { text: 'Total Bill', value: 'totalBill', align: 'center', sortable: false },
+      { text: 'Status', value: 'paid', align: 'center', sortable: false },
     ],
     dialog: false,
     loading: false,
