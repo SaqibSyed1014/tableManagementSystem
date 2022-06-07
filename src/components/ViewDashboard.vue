@@ -4,7 +4,7 @@
       <v-col cols="12" sm="6" lg="4" v-for="(data, index) in dashboardData" :key="index">
         <v-card>
           <v-card-title>{{ data.title }}</v-card-title>
-          <v-card-text><h1 class="text-center pb-5">{{ data.total.length }}</h1></v-card-text>
+          <v-card-text><h1 class="text-center count pb-5">{{ data.total.length }}</h1></v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -60,5 +60,8 @@ export default {
 </script>
 
 <style scoped>
-
+.count{
+  color: #4cb5f5;
+  font-size: 2.5rem !important;
+}
 </style>
