@@ -18,7 +18,6 @@ export default {
     SideBar,
   },
   created() {
-    console.log(this.$vuetify.theme.themes.light.primary)
     this.$vuetify.theme.themes.light.primary = '#4cb5f5'
   },
   methods: {},
