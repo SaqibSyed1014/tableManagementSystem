@@ -14,7 +14,7 @@
       <v-list>
         <v-list-item link>
           <v-list-item-content>
-            <v-list-item-title class="text-h6">
+            <v-list-item-title class="text-h6 ">
               Table Ordering System
             </v-list-item-title>
             <v-list-item-subtitle>By Saqib Syed</v-list-item-subtitle>
@@ -30,7 +30,7 @@
       >
         <v-list-item link :to="item.link" v-for="item in sideBarItems" :key="item.name">
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon color="primary">{{ item.icon }}</v-icon>
           </v-list-item-icon>
           <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>
@@ -54,3 +54,9 @@ export default {
   }),
 }
 </script>
+
+<style>
+.text-h6{
+  color: #4cb5f5 !important;
+}
+</style>
